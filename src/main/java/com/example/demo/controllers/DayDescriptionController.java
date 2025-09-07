@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dtos.DayDescriptionDto;
 import com.example.demo.facades.DayDescriptionFacade;
-import com.example.demo.models.ApiResponseError;
+import com.example.demo.models.BasicResponse;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,7 +38,7 @@ public class DayDescriptionController {
             responseCode="404",
             content = @Content(
                 mediaType="application/json",
-                schema = @Schema(implementation= ApiResponseError.class)
+                schema = @Schema(implementation= BasicResponse.class)
             )
         )
     })
@@ -52,7 +52,7 @@ public class DayDescriptionController {
                 return ResponseEntity.ok(dayDescription.get());
             }
             else{
-                return ResponseEntity.ok(new ApiResponseError(002, "No content", "No results found", "dayDescription"));
+                return ResponseEntity.ok(BasicResponse.error( "No results found", 404));
             }
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e);

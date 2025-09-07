@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dtos.EventDescriptionDto;
 import com.example.demo.facades.EventDescriptionFacade;
-import com.example.demo.models.ApiResponseError;
+import com.example.demo.models.BasicResponse;
 
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -38,7 +38,7 @@ public class EventDescriptionController {
             responseCode = "404",
             content = @Content(
                 mediaType = "application/json",
-                schema = @Schema(implementation = ApiResponseError.class)
+                schema = @Schema(implementation = BasicResponse.class)
             )
         )
     })
@@ -49,12 +49,10 @@ public class EventDescriptionController {
             if (eventDescription.isPresent()) {
                 return ResponseEntity.ok(eventDescription.get());
             } else {
-                ApiResponseError error = new ApiResponseError(404, "Not Found", "No results found", "EventDescription");
-                return ResponseEntity.status(404).body(error);
+                return ResponseEntity.status(404).body(BasicResponse.error("No results found", 404));
             }
         } catch (Exception e) {
-            ApiResponseError error = new ApiResponseError(500, "Internal Server Error", e.getMessage(), "EventDescription");
-            return ResponseEntity.status(500).body(error);
+            return ResponseEntity.status(500).body(BasicResponse.error(e.getMessage(), 404));
         }
     }
 }

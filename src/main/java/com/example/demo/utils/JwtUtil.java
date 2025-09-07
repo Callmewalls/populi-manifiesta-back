@@ -32,9 +32,9 @@ public class JwtUtil {
     }
 
     // Generate JWT token
-    public String generateToken(String username) {
+    public String generateToken(Long id) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(id.toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs + 1000* 60 * 60 * 24 ))
                 .signWith(key, SignatureAlgorithm.HS256)

@@ -34,5 +34,9 @@ public class ProgrammedEventFacade {
         
         return this.programmedEventService.getProgrammedEventsForDate(dateTimeString);
     }
+
+    public ProgrammedEventDto createEvent(ProgrammedEventDto event){
+        return this.programmedEventService.save(event);
+    }
 }
 

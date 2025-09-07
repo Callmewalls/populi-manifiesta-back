@@ -1,16 +1,13 @@
 package com.example.demo.services;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.datetime.DateFormatter;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.example.demo.dtos.OrganizerDto;
 import com.example.demo.dtos.ProgrammedEventDto;
@@ -19,13 +16,19 @@ import com.example.demo.entities.ProgrammedEventEntity;
 import com.example.demo.repositories.ProgrammedEventRepository;
 
 @Service
-public class ProgrammedEventService {
+public class ProgrammedEventService extends  BasicServiceImpl<ProgrammedEventEntity, ProgrammedEventDto, Long>{
 
     @Autowired
-    private ModelMapper modelMapper;
+    private ProgrammedEventRepository programmedEventRepository;
 
-    @Autowired
-    private ProgrammedEventRepository repository;
+    public ProgrammedEventService(
+        ProgrammedEventRepository repository
+    ) 
+    {
+        super(repository, 
+        ProgrammedEventEntity.class, 
+        ProgrammedEventDto.class);
+    }
 
     @Autowired
     private OrganizerService organizerService;
@@ -35,7 +38,7 @@ public class ProgrammedEventService {
     LocalDateTime dateTimeStart = LocalDate.parse(dateTimeString, formatter).atStartOfDay();
     LocalDateTime dateTimeEnd = dateTimeStart.plusDays(1);
 
-    List<ProgrammedEventEntity> eventList = repository.getProgrammedEventsForDate(dateTimeStart, dateTimeEnd);
+    List<ProgrammedEventEntity> eventList = programmedEventRepository.getProgrammedEventsForDate(dateTimeStart, dateTimeEnd);
 
     return eventList.stream().map(entity -> {
         ProgrammedEventOrganizerDto dto = modelMapper.map(entity, ProgrammedEventOrganizerDto.class);
@@ -60,7 +63,7 @@ public class ProgrammedEventService {
         // Convierte el String a LocalDateTime
         LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
 
-        List<ProgrammedEventEntity> eventList = repository.getProgrammedEventsForDateTime(dateTime);
+        List<ProgrammedEventEntity> eventList = programmedEventRepository.getProgrammedEventsForDateTime(dateTime);
 
         return eventList.stream()
                 .map(entity -> {

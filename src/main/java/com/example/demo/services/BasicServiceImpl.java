@@ -2,15 +2,10 @@ package com.example.demo.services;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public class BasicServiceImpl<T, D, ID> implements BasicService<T, D, ID> {
@@ -42,6 +37,13 @@ public class BasicServiceImpl<T, D, ID> implements BasicService<T, D, ID> {
     public Optional<D> findById(ID id) {
         Optional<T> entityOpt = repository.findById(id);
         return entityOpt.map(entity -> modelMapper.map(entity, dtoClass));
+    }
+
+    @Override
+    public D create(D dto){
+        T entity = modelMapper.map(dto, entityClass);
+        T createdEntity = repository.save(entity);
+        return modelMapper.map(createdEntity, dtoClass);
     }
 
     @Override

@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.demo.dtos.UserDto;
-import com.example.demo.models.ApiResponseError;
 import com.example.demo.services.UserService;
 
 public class UserFacade {
@@ -21,10 +20,7 @@ public class UserFacade {
             return user.get();
         }
         else{
-            ApiResponseError error = new ApiResponseError();
-            error.setStatusCode(404);
-            error.setError("Not Found");
-            return error;
+            return null;
         }
     }
 }

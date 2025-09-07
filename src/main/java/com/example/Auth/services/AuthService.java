@@ -1,20 +1,14 @@
 package com.example.Auth.services;
 
-import com.example.demo.dtos.UserDto;
-import com.example.demo.services.UserService;
-import com.example.demo.utils.JwtUtil;
-
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.Optional;
 
-import javax.crypto.SecretKey;
+import com.example.demo.dtos.UserDto;
+import com.example.demo.services.UserService;
+import com.example.demo.utils.JwtUtil;
 
 @Service
 public class AuthService {
@@ -36,7 +30,8 @@ public class AuthService {
         
         Optional<UserDto> user = userService.findByEmail(email);
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
-            return jwtUtil.generateToken(email);
+            String token = jwtUtil.generateToken(user.get().getId());
+            return token;
         }
         return null;
     }

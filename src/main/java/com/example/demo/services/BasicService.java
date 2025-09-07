@@ -5,6 +5,8 @@ import java.util.Optional;
 
 
 public interface BasicService<T, D, ID> {
+    
+    public D create(D entity);
 
     public List<D> findAll();
 

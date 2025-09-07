@@ -1,6 +1,7 @@
 package com.example.demo.controllers;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dtos.ProgrammedEventDto;
-import com.example.demo.dtos.ProgrammedEventOrganizerDto;
+import com.example.demo.dtos.OrganizerDto;
+import com.example.demo.facades.OrganizerFacade;
 import com.example.demo.facades.ProgrammedEventFacade;
 import com.example.demo.models.BasicResponse;
 
@@ -24,15 +26,15 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @SecurityRequirement(name = "bearerAuth")
 @RestController
-@RequestMapping("/programmed-event")
-public class ProgrammedEventController {
+@RequestMapping("/organizer")
+public class OrganizerController {
 
     @Autowired
-    private ProgrammedEventFacade facade;
+    private OrganizerFacade facade;
 
-    @GetMapping("/getProgrammedEventsForDate")
+    @GetMapping("/getOrganizers")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ProgrammedEventOrganizerDto.class)))),
+            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = OrganizerDto.class)))),
             @ApiResponse(responseCode = "400", content = {
                     @Content(mediaType = "string", schema = @Schema(implementation = String.class)) })
     })
@@ -41,7 +43,7 @@ public class ProgrammedEventController {
     ) {
 
         try {
-            List<ProgrammedEventOrganizerDto> events = facade.getAllEventsForDate(dateTime);
+            // List<OrganizerDto> events = facade.
 
             return ResponseEntity.ok(events);
         } catch (Exception e) {
@@ -51,20 +53,26 @@ public class ProgrammedEventController {
 
     }
 
-    @GetMapping("/getProgrammedEventsForDateTime")
+    
+    @GetMapping("/getOrganizer/{id}")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = {
-                    @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ProgrammedEventDto.class))) }),
+            @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = OrganizerDto.class)))),
             @ApiResponse(responseCode = "400", content = {
                     @Content(mediaType = "string", schema = @Schema(implementation = String.class)) })
     })
-    public ResponseEntity<?> getProgrammedEventForDateTime(
-            @RequestParam String dateTime // 2025-06-01
+    public ResponseEntity<?> getOrganizer(
+            @RequestParam Long id
     ) {
 
         try {
-            List<ProgrammedEventDto> events = facade.getAllEventsForDateTime(dateTime);
-            return ResponseEntity.ok(events);
+            Optional<OrganizerDto> organizer = facade.getOrganizerById(id);
+
+            if(organizer.isPresent()){
+                return ResponseEntity.ok(organizer.get());
+            }
+            else{
+                return ResponseEntity.internalServerError().body(BasicResponse.error("No hemos encontrado un organizador con este identificador", 404));
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body(e.getMessage());
@@ -89,7 +97,7 @@ public class ProgrammedEventController {
         ProgrammedEventDto event
     ){
         try {
-            ProgrammedEventDto createdEvent = this.facade.createEvent(event);
+            ProgrammedEventDto createdEvent = facade.
 
             return ResponseEntity.status(200).body(BasicResponse.success("Evento creado", createdEvent));
             
